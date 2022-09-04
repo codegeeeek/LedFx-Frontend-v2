@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   Grid,
@@ -23,13 +23,10 @@ type MyProps = {
   sections: any;
   segments: any;
 };
-type MyState = { [key: string]: any };
+// type MyState = { [key: string]: any };
 
-export class Layout extends React.Component<MyProps, MyState> {
-  constructor(props: any) {
-    super(props);
-
-    this.state = {
+const Layout: React.FC<MyProps> = (props) => {
+    const [state, setState] = useState({
       width: 2000,
       height: 255,
       pitches: {
@@ -46,68 +43,67 @@ export class Layout extends React.Component<MyProps, MyState> {
         'A#': true,
         B: true,
       },
-      //   openFromSearch: false,
-    };
-  }
-
-  handleSizeSliderChange = (event: any, newValue: any) => {
-    this.setState({ width: newValue });
-  };
-
-  handleCheck = (event: any) => {
-    const e = event;
-    this.setState((state: any) => ({
-      pitches: {
-        ...state.pitches,
-        [e.target.name]: e.target.checked,
-      },
-    }));
-  };
-
-  handleChordClick = (event: any) => {
-    const e = event;
-    const pitchClasses = [
-      'C',
-      'C#',
-      'D',
-      'D#',
-      'E',
-      'F',
-      'F#',
-      'G',
-      'G#',
-      'A',
-      'A#',
-      'B',
-    ];
-    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
-    numbers.map((item) => {
-      this.setState((state) => ({
-        pitches: {
-          ...state.pitches,
-          [pitchClasses[item]]: false,
-        },
-      }));
-      return true;
     });
+    const {width,height,pitches} = state;
+    const {analysis,albumURL,name,artist,sections,segments} = props;
 
-    setTimeout(() => {
-      e.target.value.map((item: any) => {
-        this.setState((state: any) => ({
+    const handleSizeSliderChange = (event: any, newValue: any) => {
+        setState({...state, width: newValue});
+      };
+
+   const handleCheck = (event: any) => {
+        const e = event;
+        setState({
+          ...state,
           pitches: {
             ...state.pitches,
-            [pitchClasses[item]]: true,
+            [e.target.name]: e.target.checked,
           },
-        }));
-        return true;
-      });
-    }, 100);
-  };
+        });
+      };
 
-  render() {
-    const { analysis, albumURL, name, artist, sections, segments } = this.props;
-    const { width, height, pitches } = this.state;
+    const handleChordClick = (event: any) => {
+        const e = event;
+        const pitchClasses = [
+          'C',
+          'C#',
+          'D',
+          'D#',
+          'E',
+          'F',
+          'F#',
+          'G',
+          'G#',
+          'A',
+          'A#',
+          'B',
+        ];
+        const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+        numbers.map((item) => {
+          setState({
+            ...state,
+            pitches: {
+              ...state.pitches,
+              [pitchClasses[item]]: false,
+            },
+          });
+          return true;
+        });
+
+        setTimeout(() => {
+          e.target.value.map((item: any) => {
+            setState({
+              ...state,
+              pitches: {
+                ...state.pitches,
+                [pitchClasses[item]]: true,
+              },
+            });
+            return true;
+          });
+        }, 100);
+      };
 
     return (
       <div className="wrapper" style={{ width: '100%' }}>
@@ -214,7 +210,7 @@ export class Layout extends React.Component<MyProps, MyState> {
               <Card style={{ height: '100%', backgroundColor: '#0f0f0f' }}>
                 <CardContent>
                   <ChartSize
-                    handleSizeSliderChange={this.handleSizeSliderChange}
+                    handleSizeSliderChange={handleSizeSliderChange}
                     value={width}
                   />
                 </CardContent>
@@ -233,7 +229,7 @@ export class Layout extends React.Component<MyProps, MyState> {
                   >
                     <PitchSelect
                       pitches={pitches}
-                      handleCheck={this.handleCheck}
+                      handleCheck={handleCheck}
                     />
                   </Grid>
                 </CardContent>
@@ -242,7 +238,7 @@ export class Layout extends React.Component<MyProps, MyState> {
             <Grid item id="right" xs={12} sm={12}>
               <Card style={{ backgroundColor: '#0f0f0f' }}>
                 <CardContent>
-                  <ChordButtons handleChordClick={this.handleChordClick} />
+                  <ChordButtons handleChordClick={handleChordClick} />
                 </CardContent>
               </Card>
             </Grid>
@@ -253,16 +249,6 @@ export class Layout extends React.Component<MyProps, MyState> {
         </Grid>
       </div>
     );
-  }
 }
-
-// export default connect(
-//   (state: MyState) => ({
-//     analysis: state.spotify.audioAnalysis,
-//     segments: state.spotify.audioAnalysis.segments,
-//     sections: state.spotify.audioAnalysis.sections,
-//   }),
-//   { updatePlayerState, getAsyncIntegrations }
-// )(Layout);
 
 export default Layout;
