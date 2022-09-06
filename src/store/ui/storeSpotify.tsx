@@ -17,6 +17,10 @@ const storeSpotify = () => ({
   spTriggersList: [] as any,
   spActTriggers: [] as string[],
   playlist: [] as any,
+  audioAnalysis: {
+    segments: [] as any,
+    sections: [] as any,
+  },
 });
 
 export default storeSpotify;
